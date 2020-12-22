@@ -9,7 +9,13 @@
     "sourceMap": true,
     "outDir": "./dist",
     "baseUrl": "./",
-    "incremental": true
+    "rootDir": "./",
+    "incremental": true,
+    "paths": {
+      "@app/*": ["src/*"],
+      "$*": ["src/*"],
+      "@e2e/*": ["test/*"]
+    }
   },
   "exclude": ["node_modules", "dist"]
 }

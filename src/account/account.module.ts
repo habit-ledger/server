@@ -1,13 +1,17 @@
 import { Module } from '@nestjs/common';
-import { AccountService } from './account.service';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { AccountModel } from './account.model';
+import { AccountService } from '$account/account.service';
+import { AccountModel } from '$account/entities/account.model';
+import { ConfirmationModel } from '$account/entities/confirmation.model';
 
-const Models = TypeOrmModule.forFeature([ AccountModel ]);
+const Models = TypeOrmModule.forFeature([
+  AccountModel,
+  ConfirmationModel,
+]);
 
 @Module({
   imports: [ Models ],
   providers: [ AccountService ],
-  exports: [ Models ],
+  exports: [ Models, AccountService ],
 })
 export class AccountModule { }
