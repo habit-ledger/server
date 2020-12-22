@@ -1,0 +1,51 @@
+{
+  "parser": "@typescript-eslint/parser",
+  "parserOptions": {
+    "project": "tsconfig.json",
+    "sourceType": "module"
+  },
+  "plugins": ["@typescript-eslint/eslint-plugin"],
+  "extends": [
+    "plugin:@typescript-eslint/eslint-recommended",
+    "plugin:@typescript-eslint/recommended",
+    "prettier",
+    "prettier/@typescript-eslint"
+  ],
+  "root": true,
+  "env": {
+    "node": true,
+    "jest": true
+  },
+  "rules": {
+    "@typescript-eslint/interface-name-prefix": "off",
+    "@typescript-eslint/explicit-function-return-type": "off",
+    "@typescript-eslint/no-explicit-any": "off",
+    "semi": "error",
+    "no-template-curly-in-string": "error",
+    "require-atomic-updates": "warn",
+    "no-caller": "error",
+    "no-empty-function": "warn",
+    "no-eval": "error",
+    "no-fallthrough": "off",
+    "no-invalid-this": "error",
+    "no-lone-blocks": "warn",
+    "no-return-await": "error",
+    "no-self-compare": "error",
+    "no-sequences": "error",
+    "no-throw-literal": "error",
+    "no-unused-expressions": "error",
+    "require-await": "warn",
+    "radix": [ "error", "always" ],
+    "yoda": "error",
+    "no-use-before-define": "error",
+    "array-bracket-spacing": ["error", "always"],
+    "block-spacing": "error",
+    "brace-style": "error",
+    "camelcase": "error",
+    "comma-dangle": [ "error", "always-multiline" ],
+    "comma-spacing": "error",
+    "max-depth": [ "error", 2 ],
+    "no-lonely-if": "error",
+    "no-unneeded-ternary": "error"
+  }
+}
