@@ -17,7 +17,7 @@ export class AccountModel {
   public active: boolean;
 
   @OneToOne(() => ConfirmationModel, a => a.user)
-  public confirmation: ConfirmationModel;
+  public confirmation?: ConfirmationModel;
 
   @Column({ type: 'timestamptz', nullable: false, name: 'created_at' })
   public createdAt: Date;

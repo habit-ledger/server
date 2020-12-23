@@ -22,7 +22,6 @@
     "@typescript-eslint/no-explicit-any": "off",
     "semi": "error",
     "no-template-curly-in-string": "error",
-    "require-atomic-updates": "warn",
     "no-caller": "error",
     "no-empty-function": [
       "warn",

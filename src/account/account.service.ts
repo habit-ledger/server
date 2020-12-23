@@ -3,6 +3,7 @@ import {
   NotImplementedException,
   InternalServerErrorException,
   ConflictException,
+  NotFoundException,
 } from '@nestjs/common';
 
 import { RegisterDTO } from './dto/register.dto';
@@ -26,8 +27,27 @@ export class AccountService {
     private confirmationRepo: Repository<ConfirmationModel>
   ) { }
 
-  public confirm(): Promise<unknown> {
-    throw new NotImplementedException();
+  /**
+   * Using just a code, find a confirmation with no confirmedAt date. Having found that record,
+   * set the confirmedAt date and save it. If none is found, throw an error 404. If one is found,
+   * but it is already confirmed, throw a ConflictException.
+   *
+   * Returns the account that is linked to the confirmation for sake of ease.
+   */
+  public async confirmAccount(code: string): Promise<AccountModel> {
+    const confirmation = await this.confirmationRepo.findOne({ code }, { relations: [ 'user' ] });
+    if (confirmation == null) {
+      throw new NotFoundException('No confirmation with that code was found');
+    }
+
+    if (confirmation.confirmedAt != null) {
+      throw new ConflictException('Account already confirmed');
+    }
+
+    confirmation.confirm();
+    await this.confirmationRepo.save(confirmation);
+
+    return confirmation.user;
   }
 
   /**
