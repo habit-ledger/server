@@ -4,6 +4,8 @@ import { AccountService } from './account.service';
 import { SpyObject, createSpyObject } from '@app/testing/spy-object';
 import { TestAccount } from '@app/testing/models/account/account';
 import { RegisterDTO } from './dto/register.dto';
+import { ConfirmAccountDTO } from './dto/confirm.dto';
+import { v4 as uuid } from 'uuid';
 
 describe('AccountController', () => {
   let controller: AccountController;
@@ -49,6 +51,31 @@ describe('AccountController', () => {
       await controller.register(body);
       expect(accountService.register).toHaveBeenCalledWith(body);
     });
+
+    it.todo('returns an auth token');
+  });
+
+  describe('confirm', () => {
+    let user: TestAccount;
+    let body: ConfirmAccountDTO;
+
+    beforeEach(() => {
+      body = { code: uuid().slice(0, 32) };
+
+      accountService.confirmAccount.mockResolvedValue(user);
+    });
+
+    it('calls confirm correctly', async () => {
+      expect(body.code).toBeDefined();
+      await controller.confirmAccount(body);
+      expect(accountService.confirmAccount).toHaveBeenCalledWith(body.code);
+    });
+
+    it('returns a helpful message', async () => {
+      const response = await controller.confirmAccount(body);
+      expect(response.message).toEqual('Email confirmed');
+    });
+
   });
 
 });

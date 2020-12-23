@@ -1,7 +1,8 @@
-import { Controller, NotImplementedException, Post, Body } from '@nestjs/common';
+import { Controller, Post, Body } from '@nestjs/common';
 import { MessageResponse } from '@app/shared/responses/message';
 import { RegisterDTO } from './dto/register.dto';
 import { AccountService } from '@app/account/account.service';
+import { ConfirmAccountDTO } from './dto/confirm.dto';
 
 @Controller('account')
 export class AccountController {
@@ -19,7 +20,10 @@ export class AccountController {
   }
 
   @Post('confirm')
-  public confirmAccount(): Promise<MessageResponse> {
-    throw new NotImplementedException();
+  public async confirmAccount(
+    @Body() body: ConfirmAccountDTO
+  ): Promise<MessageResponse> {
+    await this.accounts.confirmAccount(body.code);
+    return new MessageResponse('Email confirmed');
   }
 }
