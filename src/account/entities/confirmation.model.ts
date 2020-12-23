@@ -1,6 +1,5 @@
-import { PrimaryColumn, OneToOne, Column, Entity, JoinColumn } from "typeorm";
+import { PrimaryColumn, Column, Entity, JoinColumn, OneToOne } from "typeorm";
 import { AccountModel } from "./account.model";
-import { ConflictException } from "@nestjs/common";
 
 /**
  * ConfirmationModel represents the 1 record that is created at the time of registration for
@@ -34,7 +33,7 @@ export class ConfirmationModel {
   public userId: string;
 
   @OneToOne(() => AccountModel)
-  @JoinColumn({ name: 'userId', referencedColumnName: 'id' })
+  @JoinColumn({ name: 'user_id', referencedColumnName: 'id' })
   public user: AccountModel;
 
   /**

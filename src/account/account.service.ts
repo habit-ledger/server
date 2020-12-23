@@ -31,9 +31,9 @@ export class AccountService {
   }
 
   /**
-   * Create a new user account, including the user's 
+   * Using a RegisterDTO, create a new user account
    */
-  public async create(dto: RegisterDTO): Promise<AccountModel> {
+  public async createUser(dto: RegisterDTO): Promise<AccountModel> {
     const user = this.accountRepo.create(dto);
     try {
       await user.hashPassword();
@@ -53,11 +53,48 @@ export class AccountService {
       }
 
       console.error('Unable to save user account\n', err);
+      throw new InternalServerErrorException('Something went wrong creating your account');
+    }
+
+    return user;
+  }
+
+  /**
+   * Using an existing UserId, create a new user confirmation. Note, this errors if the
+   * confirmation already exists.
+   */
+  public async createConfirmation(userId: string): Promise<ConfirmationModel> {
+    const conf = this.confirmationRepo.create({ userId });
+    try {
+      await this.confirmationRepo.createQueryBuilder()
+        .insert()
+        .values(conf)
+        .returning('*')
+        .execute();
+    } catch(err) {
+      if (err instanceof QueryFailedError && err.message.includes('duplicate')) {
+        throw new ConflictException('User already has a confirmation');
+      }
+
+      if (err instanceof QueryFailedError) {
+        const msg = 'Unable to create confirmation, please contact support';
+        console.error(err);
+        throw new InternalServerErrorException(msg);
+      }
+
+      console.error(err);
       throw err;
     }
 
-    const conf = this.confirmationRepo.create({ userId: user.id });
-    await this.confirmationRepo.save(conf);
+    return conf;
+  }
+
+  /**
+   * Create a new user account, including the user's account confirmation
+   */
+  public async register(dto: RegisterDTO): Promise<AccountModel> {
+    const user = await this.createUser(dto);
+    user.confirmation = await this.createConfirmation(user.id);
 
     return user;
   }

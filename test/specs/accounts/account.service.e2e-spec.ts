@@ -8,6 +8,7 @@ import { RegisterDTO } from '@app/account/dto/register.dto';
 import { Database } from '@e2e/database';
 import { AccountProvider } from '@e2e/accounts/account.provider';
 import { ConfirmationProvider } from '@e2e/accounts/confirmation.provider';
+import { EnvironmentMap } from "@app/environment-map";
 
 interface ITestProviders {
   accounts: AccountProvider;
@@ -31,8 +32,9 @@ describe('Account Service ()', () => {
 
     service = app.get(AccountService);
     database = new Database(AccountProvider, ConfirmationProvider);
-    database.loadEnvPgUrl('DATABASE_URL');
+    database.loadEnvPgUrl(EnvironmentMap.pgUrl);
     await database.connect('AccountService');
+
     providers = {
       accounts: database.getProvider(AccountProvider),
       confirmations: database.getProvider(ConfirmationProvider),
@@ -45,7 +47,7 @@ describe('Account Service ()', () => {
   });
 
 
-  describe('#create', () => {
+  describe('#register', () => {
 
     let dto: RegisterDTO;
     
@@ -65,23 +67,30 @@ describe('Account Service ()', () => {
     });
 
     it('creates a confirmation', async () => {
-      const res = await service.create(dto);
+      const res = await service.register(dto);
       expect(res.id).toBeDefined();
+      expect(res.confirmation).toBeDefined();
 
       const conf = await providers.confirmations.repo.findOne({ userId: res.id });
+
       expect(conf).toBeDefined();
+      expect(conf).toEqual(res.confirmation);
     });
 
     it('creates a user', async () => {
-      const res = await service.create(dto);
+      const res = await service.register(dto);
       expect(res).toBeDefined();
 
-      const match = await providers.accounts.repo.findOne(res.id);
+      const match = await providers
+        .accounts
+        .repo
+        .findOne(res.id, { relations: [ 'confirmation' ] });
+
       expect(match).toEqual(res);
     });
 
     it('hashes the password', async () => {
-      const res = await service.create(dto);
+      const res = await service.register(dto);
       expect(res.password).not.toEqual(dto.password);
 
       const same = await providers.accounts.comparePassword(dto.password, res.password);
@@ -89,9 +98,9 @@ describe('Account Service ()', () => {
     });
 
     it('errors if email in use', async () => {
-      await service.create(dto);
+      await service.register(dto);
       try {
-        await service.create(dto);
+        await service.register(dto);
       } catch (err) {
         if (err instanceof ConflictException) return;
         console.error(err);
