@@ -3,6 +3,7 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { AccountService } from '@app/account/account.service';
 import { AccountModel } from '@app/account/entities/account.model';
 import { ConfirmationModel } from '@app/account/entities/confirmation.model';
+import { AccountController } from './account.controller';
 
 const Models = TypeOrmModule.forFeature([
   AccountModel,
@@ -13,5 +14,6 @@ const Models = TypeOrmModule.forFeature([
   imports: [ Models ],
   providers: [ AccountService ],
   exports: [ Models, AccountService ],
+  controllers: [AccountController],
 })
 export class AccountModule { }
