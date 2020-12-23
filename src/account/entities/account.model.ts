@@ -24,15 +24,23 @@ export class AccountModel {
   @Column({ type: 'varchar', nullable: false })
   public password: string;
 
+  /**
+   * Take a raw plaintext password and compare it to the hashed version we have in the DB
+   * Note, this only works if this has been loaded, and should not be used in registration at all
+   */
   public comparePassword(pwd: string): Promise<boolean> {
     return new Promise((res, rej) => {
       bcrypt.compare(pwd, this.password, (err, same) => !!err ? rej(err) : res(same));
     });
   }
 
-  // hashPassword takes the current password, hashes it, and then re-assigns the password
-  // property to the hash.
-  // This should only be used if the password is still plaintext
+  /**
+   * hashPassword takes the current password, hashes it, and then re-assigns the password
+   * property to the hash.                                                               
+   *
+   * Use this as a part of the registration process to take a plaintext password, and turn it into
+   * a hashed version that is safe for saving
+   */
   public hashPassword(): Promise<void> {
     return new Promise((resolve, reject) => {
       bcrypt.hash(this.password, constants.hashRounds, (err, hash) => {
@@ -43,5 +51,4 @@ export class AccountModel {
       });
     });
   }
-
 }
