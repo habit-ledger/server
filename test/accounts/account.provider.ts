@@ -1,14 +1,15 @@
 import * as bcrypt from 'bcrypt';
-import * as AccountConstants from '$account/account.constants';
+import * as AccountConstants from '@app/account/account.constants';
 
 import { DatabaseProvider, ProvideModels } from "@e2e/database/provider";
 import { Repository } from "typeorm";
-import { AccountModel } from "$account/account.model";
-import { RegisterDTO } from "$account/dto/register.dto";
+import { AccountModel } from "@app/account/entities/account.model";
+import { RegisterDTO } from "@app/account/dto/register.dto";
 
 @ProvideModels(AccountModel)
 export class AccountProvider extends DatabaseProvider<AccountModel> {
-  public get repo(): Repository<any> {
+
+  public get repo(): Repository<AccountModel> {
     return this.db.repo(AccountModel);
   }
 
@@ -25,9 +26,13 @@ export class AccountProvider extends DatabaseProvider<AccountModel> {
       user.password = await this.hashPassword(user.password);
     }
 
-    await this.repo.save(users);
+    return this.repo.save(users);
+  }
 
-    return users;
+  public comparePassword(pwd: string, hash: string): Promise<boolean> {
+    return new Promise((res, rej) => {
+      bcrypt.compare(pwd, hash, (err, same) => !!err ? rej(err) : res(same));
+    });
   }
 
   private hashPassword(arg: string): Promise<string> {

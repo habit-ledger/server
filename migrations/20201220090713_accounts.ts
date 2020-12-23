@@ -48,7 +48,7 @@ async function createConfirmations(knex: Knex): Promise<void> {
         .nullable()
         .defaultTo(null);
 
-      tbl.specificType('code', 'char(23)')
+      tbl.specificType('code', 'char(32)')
         .notNullable()
         .defaultTo(knex.raw('md5(uuid_generate_v4()::text)'));
     });

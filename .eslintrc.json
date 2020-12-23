@@ -24,7 +24,10 @@
     "no-template-curly-in-string": "error",
     "require-atomic-updates": "warn",
     "no-caller": "error",
-    "no-empty-function": "warn",
+    "no-empty-function": [
+      "warn",
+      { "allow": ["constructors"] }
+    ],
     "no-eval": "error",
     "no-fallthrough": "off",
     "no-invalid-this": "error",

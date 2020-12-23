@@ -1,6 +1,7 @@
-import { PrimaryColumn, OneToOne, Column } from "typeorm";
+import { PrimaryColumn, OneToOne, Column, Entity } from "typeorm";
 import { AccountModel } from "./account.model";
 
+@Entity({ name: 'account_confirmations', schema: 'app' })
 export class ConfirmationModel {
 
   @Column({ type: 'timestamptz', nullable: false, name: 'created_at' })

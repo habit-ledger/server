@@ -1,5 +1,4 @@
-import { getEnvVar } from '@test/utilities/environment';
-import { Environment } from '@app/constants';
+import { getEnvVar } from '@e2e/utilities/environment';
 import { createConnection, Connection, EntityTarget, Repository } from 'typeorm';
 import { ModelContainer, Model } from './models';
 import { DatabaseProvider } from './provider';
@@ -14,10 +13,17 @@ type ProviderCtor<T = any> = {
  */
 export class Database {
 
+  public set pgUrl(arg: string) {
+    this._pgUrl = arg;
+  }
+
   private conn: Connection;
   private models: ModelContainer;
 
   private providers: Map<string, DatabaseProvider<any>>;
+
+
+  private _pgUrl: string;
 
   constructor(... providers: ProviderCtor[]) {
     this.models = new ModelContainer();
@@ -26,14 +32,17 @@ export class Database {
     providers.forEach(a => this.addProvider(a));
   }
 
+  public loadEnvPgUrl(name: string): void {
+    this._pgUrl = process.env[name];
+  }
+
   /**
    * Call this to connect to the db, and finalize the init of all models.
    */
   public async connect(name?: string): Promise<void> {
-    const url = getEnvVar(Environment.pgUrl);
     this.conn = await createConnection({
       type: 'postgres',
-      url,
+      url: this._pgUrl,
       entities: this.models.entities,
       name: name ?? `${Date.now()}-E2E-Connection`,
     });
@@ -66,7 +75,7 @@ export class Database {
     if (models.length > 0) this.models.add(models);
 
     const instance = new provider(this) as T;
-    this.providers.set(name, instance)
+    this.providers.set(name, instance);
 
     return instance;
   }
@@ -81,7 +90,7 @@ export class Database {
       throw new Error('No name to reference for removing provider');
     }
 
-    if (!this.providers.has(name)) return
+    if (!this.providers.has(name)) return;
 
     const models = this.getProviderModels(provider);
     if (models.length > 0) this.models.remove(models);
