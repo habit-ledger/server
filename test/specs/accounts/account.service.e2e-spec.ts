@@ -17,7 +17,7 @@ interface ITestProviders {
   confirmations: ConfirmationProvider;
 }
 
-describe('Account Service ()', () => {
+describe('Account Service (e2e)', () => {
   let app: INestApplication;
   let service: AccountService;
 
