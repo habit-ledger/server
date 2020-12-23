@@ -1,10 +1,20 @@
-import { Injectable, NotImplementedException, InternalServerErrorException, ConflictException } from '@nestjs/common';
+import {
+  Injectable,
+  NotImplementedException,
+  InternalServerErrorException,
+  ConflictException,
+} from '@nestjs/common';
+
 import { RegisterDTO } from './dto/register.dto';
 import { AccountModel } from './entities/account.model';
 import { InjectRepository } from '@nestjs/typeorm';
 import { ConfirmationModel } from './entities/confirmation.model';
 import { Repository, QueryFailedError } from 'typeorm';
 
+/**
+ * AccountService exposes functionality for the application to interact with a user's account.
+ * This includes registration, login, etc.
+ */
 @Injectable()
 export class AccountService {
 
@@ -20,6 +30,9 @@ export class AccountService {
     throw new NotImplementedException();
   }
 
+  /**
+   * Create a new user account, including the user's 
+   */
   public async create(dto: RegisterDTO): Promise<AccountModel> {
     const user = this.accountRepo.create(dto);
     try {

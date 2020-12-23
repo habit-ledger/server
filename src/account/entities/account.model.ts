@@ -1,8 +1,12 @@
 import * as bcrypt from 'bcrypt';
 import * as constants from '../account.constants';
 
-import { Entity, PrimaryGeneratedColumn, Column } from 'typeorm';
+import { Entity, PrimaryGeneratedColumn, Column, OneToOne, JoinColumn } from 'typeorm';
+import { ConfirmationModel } from './confirmation.model';
 
+/**
+ * AccountModel represents a specific user's account.
+ */
 @Entity({ schema: 'app', name: 'accounts' })
 export class AccountModel {
 
@@ -11,6 +15,9 @@ export class AccountModel {
 
   @Column({ type: 'boolean', nullable: false })
   public active: boolean;
+
+  @OneToOne(() => ConfirmationModel)
+  public confirmation: ConfirmationModel;
 
   @Column({ type: 'timestamptz', nullable: false, name: 'created_at' })
   public createdAt: Date;
