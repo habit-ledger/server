@@ -24,5 +24,5 @@ export abstract class DatabaseProvider<T> {
 export function ProvideModels(... arg: Model[]) {
   return function (ctor: Function) {
     Reflect.set(ctor, '__models', arg);
-  }
+  };
 }

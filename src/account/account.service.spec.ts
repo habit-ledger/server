@@ -1,7 +1,8 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { getRepositoryToken } from '@nestjs/typeorm';
 import { AccountService } from '@app/account/account.service';
-import { AccountModel } from '@app/account/account.model';
+import { AccountModel } from '@app/account/entities/account.model';
+import { ConfirmationModel } from '@app/account/entities/confirmation.model';
 
 describe('AccountService', () => {
   let service: AccountService;
@@ -12,6 +13,7 @@ describe('AccountService', () => {
         providers: [
           AccountService,
           { provide: getRepositoryToken(AccountModel), useValue: {} },
+          { provide: getRepositoryToken(ConfirmationModel), useValue: {} },
         ],
       })
       .compile();

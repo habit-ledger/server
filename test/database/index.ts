@@ -1,4 +1,3 @@
-import { getEnvVar } from '@e2e/utilities/environment';
 import { createConnection, Connection, EntityTarget, Repository } from 'typeorm';
 import { ModelContainer, Model } from './models';
 import { DatabaseProvider } from './provider';
